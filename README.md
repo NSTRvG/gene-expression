@@ -6,4 +6,6 @@ ______________________________________________________________
 ## 📌 Instalación
 
 ### **Requisitos previos**
-Asegúrate de tener **Python 3.7+** instalado en tu sistema. También debes instalar las siguientes dependencias:
+Asegúrate de tener **Python 3.7+** instalado en tu sistema.
+
+NO ES NECESARIO INTALAR OTRAS DEPENDENCIAS COMO pandas o mathplotlib///Con importar el paquete localmente todo funcionará
