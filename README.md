@@ -5,5 +5,5 @@
 ______________________________________________________________
 ## 📌 Instalación
 
-### **1️Requisitos previos**
+### **Requisitos previos**
 Asegúrate de tener **Python 3.7+** instalado en tu sistema. También debes instalar las siguientes dependencias:
