@@ -50,22 +50,26 @@ def scatter_plot(df_avg_8h, df_avg_14h, df_avg_24h):
     plt.tight_layout()
     plt.show()
 
-def heatmap(df_avg_8h, df_avg_14h, df_avg_24h, top_genes):
-    """Genera un Heatmap con los 20 genes más expresados comparando MW y Oven"""
-    df_top_avg_8h = df_avg_8h.loc[top_genes]
-    df_top_avg_14h = df_avg_14h.loc[top_genes]
-    df_top_avg_24h = df_avg_24h.loc[top_genes]
+def volcano_plot(df, padj_column):
+    """Genera un Volcano Plot con los datos de expresión génica y permite elegir la columna de p-valor ajustado"""
+    # Calcular log2FC y -log10(padj_column)
+    df["log2FC"] = np.log2(df.filter(like="MW").mean(axis=1) / df.filter(like="Oven").mean(axis=1))
+    df["-log10(padj)"] = -np.log10(df[padj_column])  # Usar la columna de p-valor ajustado proporcionada
 
-    fig, axes = plt.subplots(1, 3, figsize=(18, 8))
+    # Graficar Volcano Plot
+    plt.figure(figsize=(8, 6))
+    sns.scatterplot(data=df, x="log2FC", y="-log10(padj)", alpha=0.7)
 
-    sns.heatmap(df_top_avg_8h, annot=True, cmap="coolwarm", linewidths=0.5, ax=axes[0])
-    axes[0].set_title("Expresión en 8h (MW vs. Oven)")
+    # Resaltar genes significativamente expresados (padj < 0.05 y |log2FC| > 1)
+    significativos = df[(df[padj_column] < 0.05) & (abs(df["log2FC"]) > 1)]
+    sns.scatterplot(data=significativos, x="log2FC", y="-log10(padj)", color="red", alpha=0.8, label="Genes Diferenciales")
 
-    sns.heatmap(df_top_avg_14h, annot=True, cmap="coolwarm", linewidths=0.5, ax=axes[1])
-    axes[1].set_title("Expresión en 14h (MW vs. Oven)")
-
-    sns.heatmap(df_top_avg_24h, annot=True, cmap="coolwarm", linewidths=0.5, ax=axes[2])
-    axes[2].set_title("Expresión en 24h (MW vs. Oven)")
-
-    plt.tight_layout()
+    plt.axhline(-np.log10(0.05), color="gray", linestyle="--", label="p-adj = 0.05")
+    plt.axvline(-1, color="gray", linestyle="--")
+    plt.axvline(1, color="gray", linestyle="--")
+    plt.title(f"Volcano Plot - Genes Diferencialmente Expresados ({padj_column})")
+    plt.xlabel("Log2 Fold Change (MW vs. Oven)")
+    plt.ylabel(f"-Log10({padj_column})")
+    plt.legend()
+    plt.grid(True)
     plt.show()
